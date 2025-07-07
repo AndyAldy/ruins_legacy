@@ -1,45 +1,59 @@
-// lib/game/components/dialogue_box.dart
 import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/painting.dart';
-import 'package:ruins_legacy/game/ruins.dart';
 
 class DialogueBox extends TextBoxComponent {
-  DialogueBox({required String text, required Vector2 gameSize})
+  DialogueBox({required String text})
       : super(
           text: text,
-          position: Vector2(50, gameSize.y - 150), // Posisi di bagian bawah layar
+          // Pindahkan posisi dan anchor ke sini agar lebih rapi
+          position: Vector2(0, 0), // Posisi akan diatur ulang di onGameResize
+          anchor: Anchor.topCenter,
           boxConfig: TextBoxConfig(
-            maxWidth: gameSize.x - 100,
-            timePerChar: 0.05, // Kecepatan teks muncul
+            maxWidth: 500,
+            timePerChar: 0.05,
             growingBox: true,
-            margins: const EdgeInsets.all(20),
+            margins: const EdgeInsets.all(25),
           ),
         ) {
-    // Styling untuk kotak dialog
-    final paint = BasicPalette.black.withAlpha(200).paint();
-    final borderPaint = BasicPalette.white.paint()..strokeWidth = 2;
-    boxConfig.decorator = RRectComponent(
-        paint: paint,
-        borderPaint: borderPaint,
-        radius: const Radius.circular(8)
-    );
     // Styling untuk teks
     textRenderer = TextPaint(
       style: TextStyle(
-        fontSize: 24,
+        fontSize: 22,
         color: BasicPalette.white.color,
-        fontFamily: 'Arial', // Anda bisa ganti dengan font pixel
+        fontFamily: 'Arial', // Ganti dengan font custom jika ada
+      ),
+    );
+
+    // Hapus semua logika decorator lama dari sini
+  }
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    // Cara modern untuk menambahkan background dan border
+    // Kita tambahkan RectangleComponent sebagai child dari TextBoxComponent
+    add(
+      RectangleComponent(
+        size: size, // Ukuran akan mengikuti ukuran TextBoxComponent
+        paint: BasicPalette.black.withAlpha(220).paint(),
+        children: [
+          // Tambahkan border sebagai child dari background
+          RectangleComponent(
+            size: size,
+            paint: BasicPalette.white.paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2,
+          ),
+        ],
       ),
     );
   }
 
   @override
-  void update(double dt) {
-    super.update(dt);
-    if (finished) {
-      // Hapus dialog box setelah selesai dan user menekan tombol
-      // Logika ini akan kita tambahkan di input handler game utama
-    }
+  void onGameResize(Vector2 gameSize) {
+    super.onGameResize(gameSize);
+    // Atur posisi di bagian bawah tengah layar setelah ukurannya diketahui
+    position = Vector2(gameSize.x / 2, gameSize.y - height - 20);
   }
 }

@@ -1,32 +1,33 @@
-// lib/game/components/player.dart
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/services.dart';
-import 'package:ruins_legacy/game/ruins.dart';
+import 'package:flutter/widgets.dart';
 import 'package:ruins_legacy/game/components/npc/npc.dart';
-import 'package:ruins_legacy/widgets/dialogue_box.dart';
+import 'package:ruins_legacy/game/ruins.dart';
 
+// GANTI KeyboardHandler menjadi KeyboardEvents
 class Player extends SpriteAnimationComponent
-    with KeyboardHandler, HasGameRef<RuinsGame>, CollisionCallbacks {
+    with HasGameRef<RuinsGame>, CollisionCallbacks, KeyboardEvents {
   final double _playerSpeed = 200.0;
-  final Vector2 _velocity = Vector2.zero();
-  Npc? collidingNpc;
+  Vector2 _velocity = Vector2.zero();
 
-  // Animasi untuk setiap arah
   late final SpriteAnimation _runDownAnimation;
   late final SpriteAnimation _runLeftAnimation;
   late final SpriteAnimation _runUpAnimation;
   late final SpriteAnimation _runRightAnimation;
   late final SpriteAnimation _standingAnimation;
 
-  Player({required Vector2 position}) : super(size: Vector2.all(64.0), anchor: Anchor.center);
+  Npc? _collidingNpc;
+
+  Player({required Vector2 position})
+      : super(position: position, size: Vector2.all(48.0), anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {
-    // Muat semua animasi dari satu spritesheet
     final spriteSheet = SpriteSheet(
-      image: await game.images.load('player_spritesheet.png'), // Anda perlu siapkan gambar ini
+      image: await game.images.load('player_spritesheet.png'),
       srcSize: Vector2(32.0, 32.0),
     );
 
@@ -35,72 +36,63 @@ class Player extends SpriteAnimationComponent
     _runUpAnimation = spriteSheet.createAnimation(row: 2, stepTime: 0.1, to: 4);
     _runRightAnimation = spriteSheet.createAnimation(row: 3, stepTime: 0.1, to: 4);
     _standingAnimation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 1);
-    
+
     animation = _standingAnimation;
     add(RectangleHitbox());
   }
 
-  @override
-  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowRight);
-    final isUpKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyW) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowUp);
-    final isDownKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyS) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowDown);
+  // GANTI tipe return dari bool ke KeyEventResult
+  KeyEventResult onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    _velocity = Vector2.zero();
 
-    // Atur kecepatan berdasarkan tombol yang ditekan
-    _velocity.x = 0;
-    _velocity.y = 0;
-    if (isLeftKeyPressed) {
+    // Logika gerakan tetap sama
+    if (keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
       _velocity.x = -_playerSpeed;
       animation = _runLeftAnimation;
-    }
-    if (isRightKeyPressed) {
+    } else if (keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
       _velocity.x = _playerSpeed;
       animation = _runRightAnimation;
-    }
-    if (isUpKeyPressed) {
+    } else if (keysPressed.contains(LogicalKeyboardKey.keyW) || keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
       _velocity.y = -_playerSpeed;
       animation = _runUpAnimation;
-    }
-    if (isDownKeyPressed) {
+    } else if (keysPressed.contains(LogicalKeyboardKey.keyS) || keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
       _velocity.y = _playerSpeed;
       animation = _runDownAnimation;
-    }
-    
-    // Jika tidak ada tombol gerakan ditekan, kembali ke animasi berdiri
-    if (!isLeftKeyPressed && !isRightKeyPressed && !isUpKeyPressed && !isDownKeyPressed) {
+    } else {
       animation = _standingAnimation;
     }
 
-    return true;
+    // GANTI return true menjadi KeyEventResult.handled
+    return KeyEventResult.handled;
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    // Gerakkan pemain berdasarkan kecepatan
     position += _velocity * dt;
   }
-  
-  @override
-  void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
+
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Npc) {
-      collidingNpc = other;
-      void interact() {
-    if (collidingNpc != null) {
-      gameRef.showDialogue(collidingNpc!.dialogue);
+      _collidingNpc = other;
     }
   }
-}
-    // Jika bertabrakan dengan sesuatu (misal: dinding), berhenti
-    if (other is ScreenHitbox) {
-      // Anda bisa tambahkan logika untuk dinding spesifik di sini
+
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+    if (other is Npc) {
+      _collidingNpc = null;
+    }
+  }
+
+  void interact() {
+    if (_collidingNpc != null) {
+      if (_collidingNpc!.isEnemy) {
+        gameRef.startBattle();
+      } else {
+        gameRef.showDialogue(_collidingNpc!.dialogue);
+      }
     }
   }
 }
