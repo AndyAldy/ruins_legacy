@@ -22,7 +22,6 @@ class OverworldScreen extends Component with HasGameRef<RuinsGame> {
     final map = await TiledComponent.load('map.tmx', Vector2.all(16));
     add(map);
 
-    // ... sisa kode tidak berubah ...
     final collisionLayer = map.tileMap.getLayer<ObjectGroup>('Collisions');
     if (collisionLayer != null) {
       for (final obj in collisionLayer.objects) {
@@ -35,6 +34,7 @@ class OverworldScreen extends Component with HasGameRef<RuinsGame> {
     final spawnLayer = map.tileMap.getLayer<ObjectGroup>('Spawns');
     if (spawnLayer != null) {
       for (final obj in spawnLayer.objects) {
+        final NpcData = game.dataManager.getNpcByMapName(obj.name);
         switch (obj.name) {
           case 'Player':
             game.player.position = Vector2(obj.x, obj.y);
@@ -43,14 +43,14 @@ class OverworldScreen extends Component with HasGameRef<RuinsGame> {
           case 'Npc':
             add(Npc(
                 position: Vector2(obj.x, obj.y),
-                dialogue: "Zzz... jangan ganggu aku..."));
+                dialogue: "Zzz... jangan ganggu aku...", data: NpcData));
             break;
           case 'Enemy':
             add(Npc(
                 position: Vector2(obj.x, obj.y),
                 dialogue: "Grrr... kau menantangku?",
                 isEnemy: true,
-                enemyType: Keroco.new));
+                enemyType: Keroco.new, data: NpcData));
             break;
         }
       }

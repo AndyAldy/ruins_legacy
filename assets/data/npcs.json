@@ -1,0 +1,15 @@
+[
+  {
+    "mapName": "SleepingGuy",
+    "sprite": "sprite/players/player_spritesheet.png",
+    "dialogue": "Zzz... jangan ganggu aku...",
+    "isEnemy": false
+  },
+  {
+    "mapName": "KerocoSpawner",
+    "sprite": "sprite/enemies/keroco.png",
+    "dialogue": "Grrr... kau menantangku?",
+    "isEnemy": true,
+    "enemyId": "keroco"
+  }
+]

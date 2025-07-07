@@ -1,0 +1,18 @@
+[
+  {
+    "id": "keroco",
+    "name": "Keroco",
+    "sprite": "sprite/enemies/keroco.png",
+    "maxHp": 30,
+    "attack": 3,
+    "defense": 0
+  },
+  {
+    "id": "golem",
+    "name": "Guardian Golem",
+    "sprite": "sprite/enemies/golem.png",
+    "maxHp": 150,
+    "attack": 10,
+    "defense": 5
+  }
+]

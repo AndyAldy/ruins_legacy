@@ -10,11 +10,13 @@ import 'package:ruins_legacy/game/routes/afterlife_route.dart';
 import 'package:ruins_legacy/game/routes/battle_route.dart';
 import 'package:ruins_legacy/game/routes/overworld_route.dart';
 import 'package:ruins_legacy/game/systems/dialogue_system.dart';
+import 'package:ruins_legacy/managers/data_managers.dart';
 import 'package:ruins_legacy/models/game_data.dart';
 
 class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
   late final RouterComponent router;
   late final DialogueSystem dialogueSystem;
+  final DataManager dataManager = DataManager(); 
 
   final GameData playerData = GameData();
   final Player player = Player();
@@ -22,10 +24,13 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
   @override
   Future<void> onLoad() async {
+    images.prefix = 'assets/img/';
+    await dataManager.load(assets);
     await images.loadAll([
       'sprite/players/player_spritesheet.png',
-      'sprite/enemies/keroco.png', // Ganti dengan nama sprite yang benar
-      'tilesets/ruins_tileset.png', // Ganti dengan nama tileset yang benar
+      'sprite/enemies/keroco.png',
+      'sprite/enemies/golem.png',
+      'tilesets/ruins_tileset.png',
     ]);
 
     camera.viewport = FixedResolutionViewport(resolution: Vector2(640, 360));
@@ -41,7 +46,6 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
       },
     );
     add(router);
-
     return super.onLoad();
   }
 

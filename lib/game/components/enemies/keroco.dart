@@ -2,10 +2,11 @@
 
 import 'package:flame/components.dart';
 import 'package:ruins_legacy/game/components/enemies/enemy.dart';
+import 'package:ruins_legacy/managers/data_managers.dart';
 
 // Implementasi musuh 'Keroco' (level rendah)
 class Keroco extends Enemy {
-  Keroco({super.position})
+  Keroco({super.position, required EnemyData data})
       : super(
           name: 'Keroco',
           maxHp: 30,

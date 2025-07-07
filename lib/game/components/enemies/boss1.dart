@@ -1,8 +1,9 @@
 // lib/game/components/enemies/enemy.dart
 import 'package:flame/components.dart';
-import 'package:ruins_legacy/game/ruins.dart'; // Import RuinsGame
+import 'package:ruins_legacy/game/ruins.dart';
+import 'package:ruins_legacy/managers/data_managers.dart'; // Import RuinsGame
 class Boss1 extends Enemy {
-  Boss1({Vector2? position})
+  Boss1({Vector2? position, required EnemyData data})
       : super(
           name: 'Guardian Golem',
           maxHp: 150,
