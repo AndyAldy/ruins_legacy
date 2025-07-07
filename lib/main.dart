@@ -1,5 +1,3 @@
-// lib/main.dart
-
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:ruins_legacy/screens/main_menu.dart';
@@ -12,11 +10,11 @@ void main() async {
   // Set ke mode fullscreen
   await Flame.device.fullScreen();
 
-  runApp(const MyApp());
+  runApp(const RuinsLegacy());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class RuinsLegacy extends StatelessWidget {
+  const RuinsLegacy({super.key});
 
   @override
   Widget build(BuildContext context) {
