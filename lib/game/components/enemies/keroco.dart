@@ -3,9 +3,8 @@ import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 import 'package:ruins_legacy/managers/data_managers.dart';
 
 class Keroco extends Enemy {
-  final EnemyData data;
-  // PERBAIKAN: Ubah konstruktor untuk menerima EnemyData.
-  Keroco(this.data, {required EnemyData, required EnemyData data})
+  // PERBAIKAN: Konstruktor sekarang HANYA menerima EnemyData.
+  Keroco({required EnemyData data, required EnemyData EnemyData})
       : super(
           // Nilai diambil dari 'data', bukan di-hardcode.
           name: data.name,
@@ -16,8 +15,9 @@ class Keroco extends Enemy {
 
   @override
   Future<void> onLoad() async {
+    // Memuat animasi. Pastikan path dan konfigurasi sesuai.
     animation = await gameRef.loadSpriteAnimation(
-      'sprite/enemies/keroco.png', // Anda bisa ganti ini dengan data.sprite
+      'sprite/enemies/keroco.png', // Anda bisa ganti ini dengan path dari data
       SpriteAnimationData.sequenced(
         amount: 4, // Jumlah frame animasi
         stepTime: 0.2,

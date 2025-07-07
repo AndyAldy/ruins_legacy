@@ -30,6 +30,4 @@ class BattleScreen extends Component with HasGameRef<RuinsGame> {
       ),
     );
   }
-
-
 }

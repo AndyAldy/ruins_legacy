@@ -31,17 +31,18 @@ class OverworldScreen extends Component with HasGameRef<RuinsGame> {
 
     final spawnLayer = map.tileMap.getLayer<ObjectGroup>('Spawns');
     if (spawnLayer != null) {
-      // PERBAIKAN: Logika spawning disederhanakan
+      // PERBAIKAN: Logika spawning yang benar dan berbasis data.
       for (final obj in spawnLayer.objects) {
         if (obj.name == 'Player') {
           game.player.position = Vector2(obj.x, obj.y);
           add(game.player);
         } else {
-          // Ambil data NPC dari DataManager berdasarkan nama objek di peta
+          // Ambil data NPC dari DataManager berdasarkan nama objek di peta Tiled.
           final npcData = game.dataManager.getNpcByMapName(obj.name);
           if (npcData != null) {
+            // Jika data ditemukan, buat NPC berdasarkan data tersebut.
             add(Npc(
-              data: npcData, // Berikan data lengkap ke NPC
+              data: npcData,
               position: Vector2(obj.x, obj.y),
             ));
           }
@@ -53,7 +54,7 @@ class OverworldScreen extends Component with HasGameRef<RuinsGame> {
   }
   @override
   void onRemove() {
-    // Simpan posisi pemain saat ini sebelum menghapus layar
+    // Simpan posisi pemain saat ini sebelum menghapus komponen.
     gameRef.lastPlayerPosition = gameRef.player.position;
     super.onRemove();
   }
