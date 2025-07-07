@@ -1,47 +1,28 @@
-// lib/game/components/enemies/enemy.dart
 import 'package:flame/components.dart';
-import 'package:ruins_legacy/game/ruins.dart';
-import 'package:ruins_legacy/managers/data_managers.dart'; // Import RuinsGame
+import 'package:ruins_legacy/game/components/enemies/enemy.dart';
+import 'package:ruins_legacy/managers/data_managers.dart';
+
 class Boss1 extends Enemy {
-  Boss1({Vector2? position, required EnemyData data})
+  // PERBAIKAN: Konstruktor sekarang HANYA menerima EnemyData.
+  final EnemyData data;
+
+  Boss1(this.data, {required EnemyData, required EnemyData data})
       : super(
-          name: 'Guardian Golem',
-          maxHp: 150,
-          attack: 10,
-          position: position,
+          // PERBAIKAN: Nilai diambil dari 'data', bukan di-hardcode.
+          name: data.name,
+          maxHp: data.maxHp,
+          attack: data.attack,
+          defense: data.defense,
         );
 
   @override
   Future<void> onLoad() async {
-    // 'gameRef' sekarang tersedia di sini
-    sprite = await gameRef.loadSprite('npc.png'); // Ganti dengan sprite boss nanti
-    size = Vector2.all(64);
+    // PERBAIKAN: Gunakan 'loadSprite' untuk gambar diam, bukan 'loadSpriteAnimation'.
+    // Path gambar diambil dari data.sprite, yang berasal dari file enemies.json.
+    sprite = await gameRef.loadSprite(data.sprite);
+    
+    // Atur ukuran komponen setelah sprite dimuat.
+    size = Vector2.all(64); // Anda bisa sesuaikan ukuran ini
     return super.onLoad();
-  }
-}
-
-abstract class Enemy extends SpriteComponent with HasGameRef<RuinsGame> {
-  // ... sisa kode tidak berubah
-  final String name;
-  final int maxHp;
-  int hp;
-  final int attack;
-  final int defense;
-
-  Enemy({
-    required this.name,
-    required this.maxHp,
-    required this.attack,
-    this.defense = 0,
-    super.position,
-  })  : hp = maxHp;
-
-  bool get isDefeated => hp <= 0;
-
-  void takeDamage(int amount) {
-    hp -= amount;
-    if (hp < 0) {
-      hp = 0;
-    }
   }
 }

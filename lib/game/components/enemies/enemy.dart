@@ -2,16 +2,16 @@ import 'package:flame/components.dart';
 import 'package:ruins_legacy/game/ruins.dart';
 
 // Ini adalah SATU-SATUNYA kelas dasar untuk semua musuh.
-// Menggunakan SpriteAnimationComponent agar semua musuh bisa beranimasi.
+// Pastikan tidak ada definisi kelas Enemy lain di proyek Anda.
 abstract class Enemy extends SpriteAnimationComponent with HasGameRef<RuinsGame> {
-  final String name; // Menggunakan 'name' agar konsisten
+  final String name;
   final int maxHp;
   int hp;
   final int attack;
   final int defense;
 
   Enemy({
-    required this.name, // Menggunakan 'name'
+    required this.name,
     required this.maxHp,
     required this.attack,
     this.defense = 0,

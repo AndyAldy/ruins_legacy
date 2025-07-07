@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flame/cache.dart';
-import 'package:flame/game.dart';
 import 'package:ruins_legacy/game/components/enemies/boss1.dart';
 import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 import 'package:ruins_legacy/game/components/enemies/keroco.dart';
@@ -44,13 +43,10 @@ class DataManager {
   final Map<String, EnemyData> _enemies = {};
   final Map<String, NpcData> _npcs = {};
 
-  // Getter untuk mengakses data dengan mudah
   NpcData? getNpcByMapName(String name) => _npcs[name];
   EnemyData? getEnemyById(String id) => _enemies[id];
 
-  // Fungsi untuk memuat semua data saat game dimulai
   Future<void> load(AssetsCache assets) async {
-    // Memuat data musuh
     final enemyJsonString = await assets.read('data/enemies.json');
     final List<dynamic> enemyJsonList = json.decode(enemyJsonString);
     for (var jsonData in enemyJsonList) {
@@ -58,7 +54,6 @@ class DataManager {
       _enemies[data.id] = data;
     }
 
-    // Memuat data NPC
     final npcJsonString = await assets.read('data/npcs.json');
     final List<dynamic> npcJsonList = json.decode(npcJsonString);
     for (var jsonData in npcJsonList) {
@@ -67,19 +62,17 @@ class DataManager {
     }
   }
 
-  // Fungsi untuk membuat instance musuh berdasarkan ID
   Enemy createEnemyById(String id) {
     final data = getEnemyById(id);
     if (data == null) {
       throw Exception('Enemy with id $id not found!');
     }
-
-    // Di sini kita petakan ID ke kelas Dart yang sesuai
+    
     switch (id) {
       case 'keroco':
-        return Keroco(data: data);
+        return Keroco(data: data, EnemyData: data);
       case 'golem':
-        return Boss1(data: data);
+        return Boss1(data: data, EnemyData: data);
       default:
         throw Exception('No enemy class mapping for id $id');
     }

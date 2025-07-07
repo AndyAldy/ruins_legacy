@@ -1,6 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:ruins_legacy/game/components/enemies/keroco.dart';
 import 'package:ruins_legacy/game/components/npc/npc.dart';
 import 'package:ruins_legacy/game/components/worlds/collision_block.dart';
 import 'package:ruins_legacy/game/ruins.dart';
@@ -18,7 +17,6 @@ class OverworldScreen extends Component with HasGameRef<RuinsGame> {
 
   @override
   Future<void> onLoad() async {
-    // PERBAIKAN: Muat map dari path yang benar
     final map = await TiledComponent.load('map.tmx', Vector2.all(16));
     add(map);
 
@@ -33,29 +31,30 @@ class OverworldScreen extends Component with HasGameRef<RuinsGame> {
 
     final spawnLayer = map.tileMap.getLayer<ObjectGroup>('Spawns');
     if (spawnLayer != null) {
+      // PERBAIKAN: Logika spawning disederhanakan
       for (final obj in spawnLayer.objects) {
-        final NpcData = game.dataManager.getNpcByMapName(obj.name);
-        switch (obj.name) {
-          case 'Player':
-            game.player.position = Vector2(obj.x, obj.y);
-            add(game.player);
-            break;
-          case 'Npc':
+        if (obj.name == 'Player') {
+          game.player.position = Vector2(obj.x, obj.y);
+          add(game.player);
+        } else {
+          // Ambil data NPC dari DataManager berdasarkan nama objek di peta
+          final npcData = game.dataManager.getNpcByMapName(obj.name);
+          if (npcData != null) {
             add(Npc(
-                position: Vector2(obj.x, obj.y),
-                dialogue: "Zzz... jangan ganggu aku...", data: NpcData));
-            break;
-          case 'Enemy':
-            add(Npc(
-                position: Vector2(obj.x, obj.y),
-                dialogue: "Grrr... kau menantangku?",
-                isEnemy: true,
-                enemyType: Keroco.new, data: NpcData));
-            break;
+              data: npcData, // Berikan data lengkap ke NPC
+              position: Vector2(obj.x, obj.y),
+            ));
+          }
         }
       }
     }
 
     return super.onLoad();
+  }
+  @override
+  void onRemove() {
+    // Simpan posisi pemain saat ini sebelum menghapus layar
+    gameRef.lastPlayerPosition = gameRef.player.position;
+    super.onRemove();
   }
 }

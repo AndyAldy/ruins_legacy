@@ -1,28 +1,29 @@
-// lib/game/enemies/keroco.dart
-
 import 'package:flame/components.dart';
 import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 import 'package:ruins_legacy/managers/data_managers.dart';
 
-// Implementasi musuh 'Keroco' (level rendah)
 class Keroco extends Enemy {
-  Keroco({super.position, required EnemyData data})
+  final EnemyData data;
+  // PERBAIKAN: Ubah konstruktor untuk menerima EnemyData.
+  Keroco(this.data, {required EnemyData, required EnemyData data})
       : super(
-          name: 'Keroco',
-          maxHp: 30,
-          attack: 3,
+          // Nilai diambil dari 'data', bukan di-hardcode.
+          name: data.name,
+          maxHp: data.maxHp,
+          attack: data.attack,
+          defense: data.defense,
         );
 
   @override
   Future<void> onLoad() async {
-    animation = await game.loadSpriteAnimation(
-      'enemy_sprite.png', // Ganti dengan nama file sprite musuh Anda
+    animation = await gameRef.loadSpriteAnimation(
+      'sprite/enemies/keroco.png', // Anda bisa ganti ini dengan data.sprite
       SpriteAnimationData.sequenced(
-        amount: 4, // Jumlah frame
+        amount: 4, // Jumlah frame animasi
         stepTime: 0.2,
         textureSize: Vector2(32, 32), // Ukuran satu frame
       ),
     );
-    await super.onLoad();
+    return super.onLoad();
   }
 }
