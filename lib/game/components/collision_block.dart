@@ -1,20 +1,24 @@
-// lib/game/components/collision_block.dart
-import 'package:flame/collisions.dart';
+// lib/game/worlds/collision_block.dart
+
 import 'package:flame/components.dart';
+import 'package:flame/collisions.dart';
 
-class CollisionBlock extends PositionComponent {
-  bool isVisible;
-
-  CollisionBlock({
-    Vector2? position,
-    Vector2? size,
-    this.isVisible = false, // Secara default tidak terlihat
-  }) : super(position: position, size: size) {
-    // debugMode = isVisible; // Hapus komentar ini jika ingin melihat hitbox
+// Blok tak terlihat untuk menangani tabrakan dengan lingkungan.
+class CollisionBlock extends PositionComponent with CollisionCallbacks {
+  CollisionBlock({required Vector2 position, required Vector2 size})
+      : super(position: position, size: size) {
+    // debugMode = true; // Aktifkan untuk melihat hitbox
   }
 
   @override
   Future<void> onLoad() async {
     add(RectangleHitbox());
+    return super.onLoad();
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    // Logika untuk menangani tabrakan dengan objek lain
+    super.onCollision(intersectionPoints, other);
   }
 }

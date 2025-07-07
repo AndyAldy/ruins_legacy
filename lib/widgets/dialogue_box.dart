@@ -1,11 +1,15 @@
 import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
 class DialogueBox extends TextBoxComponent {
-  DialogueBox({required String text, required Vector2 gameSize}) // Terima gameSize
+  final VoidCallback? onComplete;
+  
+  DialogueBox(this.onComplete, {required String text, required Vector2 gameSize, required void Function() onComplete}) // Terima gameSize
       : super(
           text: text,
+          textRenderer: TextPaint(style: const TextStyle(fontSize: 24, color: Colors.white)),
           position: Vector2(gameSize.x / 2, gameSize.y - 20), // Atur posisi
           anchor: Anchor.bottomCenter, // Gunakan anchor!
           boxConfig: TextBoxConfig(
@@ -15,6 +19,7 @@ class DialogueBox extends TextBoxComponent {
             margins: const EdgeInsets.all(25),
           ),
         ) {
+      anchor = Anchor.bottomCenter;
     // Styling untuk teks
     textRenderer = TextPaint(
       style: TextStyle(
