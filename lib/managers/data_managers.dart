@@ -38,7 +38,6 @@ class NpcData {
         enemyId = json['enemyId'];
 }
 
-
 class DataManager {
   final Map<String, EnemyData> _enemies = {};
   final Map<String, NpcData> _npcs = {};
@@ -70,9 +69,9 @@ class DataManager {
     
     switch (id) {
       case 'keroco':
-        return Keroco(data: data, EnemyData: data);
+        return Keroco(data: data);
       case 'golem':
-        return Boss1(data: data, EnemyData: data);
+        return Boss1(data: data);
       default:
         throw Exception('No enemy class mapping for id $id');
     }

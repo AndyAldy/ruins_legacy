@@ -14,17 +14,19 @@ class AfterlifeScreen extends Component with HasGameRef<RuinsGame>, TapCallbacks
             fontSize: 64,
             color: Color(0xFFFF0000),
             fontWeight: FontWeight.bold,
+            fontFamily: 'Serif', // Ganti dengan font kustom Anda
           ),
         ),
         anchor: Anchor.center,
         position: gameRef.size / 2,
       ),
       TextComponent(
-        text: 'Tap to return to Main Menu',
+        text: 'Tap to try again',
         textRenderer: TextPaint(
           style: const TextStyle(
             fontSize: 24,
             color: Color(0xFFFFFFFF),
+            fontFamily: 'Serif',
           ),
         ),
         anchor: Anchor.center,
@@ -36,9 +38,7 @@ class AfterlifeScreen extends Component with HasGameRef<RuinsGame>, TapCallbacks
 
   @override
   void onTapUp(TapUpEvent event) {
-    // Kembali ke menu utama
-    // Ini memerlukan sedikit perubahan di main.dart, atau menggunakan deep linking
-    // Untuk saat ini, kita restart game saja.
+    // Reset data pemain dan kembali ke overworld
     gameRef.playerData.reset();
     gameRef.router.pushReplacementNamed('overworld');
     super.onTapUp(event);

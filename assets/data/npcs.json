@@ -3,7 +3,8 @@
     "mapName": "SleepingGuy",
     "sprite": "sprite/players/player_spritesheet.png",
     "dialogue": "Zzz... jangan ganggu aku...",
-    "isEnemy": false
+    "isEnemy": false,
+    "enemyId": null
   },
   {
     "mapName": "KerocoSpawner",
@@ -11,5 +12,12 @@
     "dialogue": "Grrr... kau menantangku?",
     "isEnemy": true,
     "enemyId": "keroco"
+  },
+  {
+    "mapName": "GolemSpawner",
+    "sprite": "sprite/enemies/golem.png",
+    "dialogue": "Kau tidak akan lewat!",
+    "isEnemy": true,
+    "enemyId": "golem"
   }
 ]
