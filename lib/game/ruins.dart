@@ -1,117 +1,100 @@
+// lib/game/ruins.dart
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flame/src/camera/viewfinder.dart';
-import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ruins_legacy/game/components/player/player.dart';
-import 'package:ruins_legacy/game/components/collision_block.dart';
+import 'package:ruins_legacy/game/routes/battle_route.dart';
+import 'package:ruins_legacy/game/routes/overworld_route.dart';
 import 'package:ruins_legacy/widgets/dialogue_box.dart';
-import 'package:ruins_legacy/game/components/npc/npc.dart';
-import 'package:ruins_legacy/screens/battle.dart';
-
-enum GameState { overworld, battle }
 
 class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
   late final CameraComponent cam;
-  late TiledComponent map;
-  late Player player;
-  bool isDialogueVisible = false;
-  GameState gameState = GameState.overworld;
+  late final RouterComponent router;
+  
+  // Perbaikan 1: Inisialisasi Player tanpa argumen.
+  // Posisinya akan diatur oleh OverworldRoute.
+  Player player = Player();
 
-  final List<Component> _overworldComponents = [];
+  bool isDialogueVisible = false;
 
   @override
   Future<void> onLoad() async {
-    await images.loadAll(['player_spritesheet.png', 'npc.png', 'enemy_sprite.png']);
+    // Muat semua aset di awal
+    await images.loadAll([
+      'player_spritesheet.png',
+      'npc.png',
+      'enemy_sprite.png',
+    ]);
 
+    // Setup kamera
     cam = CameraComponent.withFixedResolution(world: this, width: 640, height: 360);
     cam.viewfinder.zoom = 1.5;
     add(cam);
 
-    map = await TiledComponent.load('map.tmx', Vector2.all(16));
-    add(map);
-
-    final collisionLayer = map.tileMap.getLayer<ObjectGroup>('Collisions');
-    if (collisionLayer != null) {
-      for (final collision in collisionLayer.objects) {
-        add(CollisionBlock(
-          position: Vector2(collision.x, collision.y),
-          size: Vector2(collision.width, collision.height),
-        ));
-      }
-    }
-    
-    add(Npc(
-      position: Vector2(300, 250),
-      dialogue: "Halo, petualang... Selamat datang di reruntuhan kuno ini.",
-    ));
-    add(Npc(
-      position: Vector2(400, 200),
-      dialogue: "Grrr... Bersiaplah!",
-      isEnemy: true,
-    ));
-
-    player = Player(position: Vector2(200, 200));
-    add(player);
-    
-    cam.viewfinder.follow(player);
-  }
-
-  void startBattle() {
-    if (gameState == GameState.overworld) {
-      gameState = GameState.battle;
-      _overworldComponents.clear();
-      _overworldComponents.addAll(children.where((c) => c is! CameraComponent && c is! BattleScreen));
-      for (final component in _overworldComponents) {
-        component.removeFromParent();
-      }
-      add(BattleScreen());
-    }
-  }
-
-  void endBattle() {
-    if (gameState == GameState.battle) {
-      gameState = GameState.overworld;
-      removeWhere((component) => component is BattleScreen);
-      addAll(_overworldComponents);
-    }
+    // Setup router
+    add(
+      router = RouterComponent(
+        initialRoute: 'overworld',
+        routes: {
+          'overworld': Route(OverworldRoute.new),
+          'battle': Route(BattleRoute.new),
+        },
+      ),
+    );
   }
 
   @override
-  KeyEventResult onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (gameState == GameState.battle) {
-      if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyQ) {
-        endBattle();
-        return KeyEventResult.handled;
-      }
-      return KeyEventResult.ignored;
-    }
-
+  KeyEventResult onKeyEvent(
+      RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is RawKeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
         if (isDialogueVisible) {
-          removeWhere((component) => component is DialogueBox);
+          // Hapus dialog dari viewport kamera, bukan dari game root.
+          cam.viewport.removeWhere((component) => component is DialogueBox);
           isDialogueVisible = false;
         } else {
-          player.interact();
+          // Cari player di dalam route aktif untuk interaksi
+          (router.currentRoute.children.whereType<Player>().firstOrNull)?.interact();
         }
         return KeyEventResult.handled;
       }
+      
+      // Tombol 'Q' untuk kabur dari pertarungan (jika sedang di battle)
+      if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
+        if (router.currentRoute.keyName == 'battle') {
+          endBattle();
+          return KeyEventResult.handled;
+        }
+      }
     }
-    
     return super.onKeyEvent(event as KeyEvent, keysPressed);
   }
 
+  // Perbaikan 2 & 3: Pindahkan metode ke DALAM kelas dan perbaiki `game.size`.
   void showDialogue(String text) {
     if (!isDialogueVisible) {
-      add(DialogueBox(text: text));
+      // Gunakan 'size' bukan 'game.size' dan tambahkan ke viewport kamera.
+      cam.viewport.add(DialogueBox(text: text, gameSize: size)); 
       isDialogueVisible = true;
     }
   }
-}
+  
+  // Perbaikan 2: Pindahkan metode ini juga ke dalam kelas.
+  void endBattle() {
+    router.pop(); // Kembali ke route sebelumnya (overworld)
+    // Anda bisa mengatur ulang posisi player di sini jika perlu,
+    // atau biarkan OverworldRoute yang menanganinya saat 'onPush'.
+  }
 
-extension on Viewfinder {
-  void follow(Player player) {}
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // Pastikan kamera selalu mengikuti player jika player ada di overworld
+    if (router.currentRoute.keyName == 'overworld' && player.isMounted) {
+      cam.follow(player);
+    }
+  }
 }

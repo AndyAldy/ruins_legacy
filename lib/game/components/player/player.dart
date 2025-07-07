@@ -86,13 +86,14 @@ class Player extends SpriteAnimationComponent
     }
   }
 
-  void interact() {
-    if (_collidingNpc != null) {
-      if (_collidingNpc!.isEnemy) {
-        gameRef.startBattle();
-      } else {
-        gameRef.showDialogue(_collidingNpc!.dialogue);
-      }
+void interact() {
+  if (_collidingNpc != null) {
+    if (_collidingNpc!.isEnemy) {
+      // Ganti gameRef.startBattle() menjadi:
+      gameRef.router.pushNamed('battle');
+    } else {
+      gameRef.showDialogue(_collidingNpc!.dialogue);
     }
   }
+}
 }

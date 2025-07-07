@@ -3,14 +3,13 @@ import 'package:flame/palette.dart';
 import 'package:flutter/painting.dart';
 
 class DialogueBox extends TextBoxComponent {
-  DialogueBox({required String text})
+  DialogueBox({required String text, required Vector2 gameSize}) // Terima gameSize
       : super(
           text: text,
-          // Pindahkan posisi dan anchor ke sini agar lebih rapi
-          position: Vector2(0, 0), // Posisi akan diatur ulang di onGameResize
-          anchor: Anchor.topCenter,
+          position: Vector2(gameSize.x / 2, gameSize.y - 20), // Atur posisi
+          anchor: Anchor.bottomCenter, // Gunakan anchor!
           boxConfig: TextBoxConfig(
-            maxWidth: 500,
+            maxWidth: gameSize.x * 0.8, // Buat lebar lebih responsif
             timePerChar: 0.05,
             growingBox: true,
             margins: const EdgeInsets.all(25),
