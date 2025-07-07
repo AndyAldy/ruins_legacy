@@ -1,25 +1,26 @@
-import 'package:flame/components.dart'; // Route sudah ada di sini
-// HAPUS: import 'package:flame/router.dart';
+import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:ruins_legacy/game/components/collision_block.dart';
 import 'package:ruins_legacy/game/components/enemies/keroco.dart';
 import 'package:ruins_legacy/game/components/npc/npc.dart';
 import 'package:ruins_legacy/game/ruins.dart';
 
-class OverworldRoute extends Route {
-  OverworldRoute() : super(OverworldScreen.new);
+// Dengan API router Flame yang baru, kita tidak lagi memerlukan class 'OverworldRoute'.
+// Kita hanya perlu komponen layarnya saja.
 
+class OverworldScreen extends Component with HasGameRef<RuinsGame> {
   @override
-  void onPush(Route? previousRoute) {
-    final game = findGame<RuinsGame>();
+  void onMount() {
+    // Logika yang sebelumnya ada di onPush() dipindahkan ke sini.
+    // onMount() berjalan setiap kali komponen ini ditambahkan/diaktifkan.
+    final game = gameRef;
     if (game.lastPlayerPosition != Vector2.zero()) {
       game.player.position = game.lastPlayerPosition;
     }
     game.player.canMove = true;
+    super.onMount();
   }
-}
 
-class OverworldScreen extends Component with HasGameRef<RuinsGame> {
   @override
   Future<void> onLoad() async {
     final map = await TiledComponent.load('map.tmx', Vector2.all(16));

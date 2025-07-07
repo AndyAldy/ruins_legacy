@@ -8,12 +8,14 @@ class BattleRoute extends Route {
   final Enemy Function() enemyBuilder;
   late BattleSystem _battleSystem;
 
+  // Getter publik agar UI bisa mengakses battle system dengan aman
   BattleSystem get battleSystem => _battleSystem;
 
   BattleRoute({required this.enemyBuilder}) : super();
 
   @override
   void onPush(Route? previousRoute) {
+    // Gunakan findGame<T>() untuk mendapatkan referensi game
     final game = findGame<RuinsGame>();
     _battleSystem = BattleSystem(
       playerData: game.playerData,

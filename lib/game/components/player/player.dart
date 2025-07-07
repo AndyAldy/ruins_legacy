@@ -1,6 +1,8 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/input.dart'; // Pastikan import ini ada
 import 'package:flutter/services.dart';
+import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 import 'package:ruins_legacy/game/components/npc/npc.dart';
 import 'package:ruins_legacy/game/ruins.dart';
 import 'package:ruins_legacy/models/dialogue_node.dart';
@@ -13,13 +15,11 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   Vector2 _direction = Vector2.zero();
   bool canMove = true;
   Npc? _collidingNpc;
-  // Hapus 'late final RuinsGame game;'
 
   Player() : super(size: Vector2(32, 48), anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {
-    // Ganti 'game' dengan 'gameRef'
     final spriteSheet = await gameRef.images.load('player_spritesheet.png');
     animations = {
       PlayerState.idle: SpriteAnimation.fromFrameData(
@@ -39,7 +39,7 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
 
   @override
   void update(double dt) {
-    if (canMove) {
+    if (canMove && _direction != Vector2.zero()) {
       _direction.normalize();
       position += _direction * _speed * dt;
     }
@@ -47,7 +47,8 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  // PERBAIKAN: Ubah 'RawKeyEvent' menjadi 'KeyEvent'
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _direction = Vector2.zero();
     if (canMove) {
       final isUp = keysPressed.contains(LogicalKeyboardKey.keyW) ||
@@ -68,7 +69,10 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
     current =
         _direction == Vector2.zero() ? PlayerState.idle : PlayerState.running;
     if (_direction.x != 0) {
-      scale.x = _direction.x > 0 ? 1 : -1;
+      if ((scale.x > 0 && _direction.x < 0) ||
+          (scale.x < 0 && _direction.x > 0)) {
+        flipHorizontally();
+      }
     }
     return true;
   }
@@ -84,7 +88,7 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is Npc) {
+    if (other is Npc && other == _collidingNpc) {
       _collidingNpc = null;
     }
     super.onCollisionEnd(other);
@@ -93,12 +97,9 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   void interact() {
     if (_collidingNpc != null) {
       if (_collidingNpc!.isEnemy) {
-        // Tambahkan null check untuk enemyType
         final enemyBuilder = _collidingNpc!.enemyType;
-        if (enemyBuilder != null) {
-          gameRef.startBattle(enemyBuilder);
-        }
-      } else {
+        gameRef.startBattle(enemyBuilder as Enemy Function());
+            } else {
         gameRef.dialogueSystem
             .showDialogue(DialogueNode(text: _collidingNpc!.dialogue));
       }
