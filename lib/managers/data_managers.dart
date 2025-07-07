@@ -46,14 +46,16 @@ class DataManager {
   EnemyData? getEnemyById(String id) => _enemies[id];
 
   Future<void> load(AssetsCache assets) async {
-    final enemyJsonString = await assets.read('data/enemies.json');
+    // PERBAIKAN: Ganti 'read' menjadi 'readFile'
+    final enemyJsonString = await assets.readFile('data/enemies.json');
     final List<dynamic> enemyJsonList = json.decode(enemyJsonString);
     for (var jsonData in enemyJsonList) {
       final data = EnemyData.fromJson(jsonData);
       _enemies[data.id] = data;
     }
 
-    final npcJsonString = await assets.read('data/npcs.json');
+    // PERBAIKAN: Ganti 'read' menjadi 'readFile' di sini juga
+    final npcJsonString = await assets.readFile('data/npcs.json');
     final List<dynamic> npcJsonList = json.decode(npcJsonString);
     for (var jsonData in npcJsonList) {
       final data = NpcData.fromJson(jsonData);

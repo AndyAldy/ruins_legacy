@@ -4,7 +4,8 @@ import 'package:ruins_legacy/managers/data_managers.dart';
 
 class Keroco extends Enemy {
   // PERBAIKAN: Konstruktor sekarang HANYA menerima EnemyData.
-  Keroco({required EnemyData data, required EnemyData EnemyData})
+  // Hapus parameter 'EnemyData' yang duplikat dari sini
+  Keroco({required EnemyData data})
       : super(
           // Nilai diambil dari 'data', bukan di-hardcode.
           name: data.name,

@@ -3,12 +3,10 @@ import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 import 'package:ruins_legacy/managers/data_managers.dart';
 
 class Boss1 extends Enemy {
-  // PERBAIKAN: Konstruktor sekarang HANYA menerima EnemyData.
   final EnemyData data;
 
-  Boss1({required this.data, required EnemyData EnemyData})
+  Boss1({required this.data})
       : super(
-          // PERBAIKAN: Nilai diambil dari 'data', bukan di-hardcode.
           name: data.name,
           maxHp: data.maxHp,
           attack: data.attack,
@@ -17,9 +15,15 @@ class Boss1 extends Enemy {
 
   @override
   Future<void> onLoad() async {
-    // Menggunakan path sprite dari DataManager.
-    sprite = await gameRef.loadSprite(data.sprite);
-    size = Vector2.all(64); // Ukuran bisa disesuaikan atau diambil dari data juga
+    // PERBAIKAN: Muat gambar sebagai animasi 1 frame, bukan sebagai sprite tunggal
+    animation = await gameRef.loadSpriteAnimation(
+      data.sprite, // Path ke file gambar golem
+      SpriteAnimationData.sequenced(
+        amount: 1, // Jumlah frame dalam animasi (hanya 1)
+        stepTime: 1, // Tidak penting karena hanya 1 frame
+        textureSize: Vector2(64, 64), // Sesuaikan dengan ukuran asli gambar golem-mu
+      ),
+    );
     return super.onLoad();
   }
 }
