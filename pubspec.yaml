@@ -10,7 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   flame: ^1.30.0
-  get: ^4.6.6  
+  get: ^4.6.6
+  flame_tiled: ^3.0.4
 
   cupertino_icons: ^1.0.8
 
