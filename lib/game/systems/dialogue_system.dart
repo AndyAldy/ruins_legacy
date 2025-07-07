@@ -19,6 +19,7 @@ class DialogueSystem {
     game.camera.viewport.add(DialogueBox(
       text: node.text,
       onComplete: hideDialogue, // Panggil hideDialogue saat teks selesai
+      gameSize: game.size,
     ));
     _isDialogueVisible = true;
     game.player.canMove = false; // Player tidak bisa bergerak saat dialog

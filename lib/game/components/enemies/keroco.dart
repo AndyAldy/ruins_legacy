@@ -5,12 +5,11 @@ import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 
 // Implementasi musuh 'Keroco' (level rendah)
 class Keroco extends Enemy {
-  Keroco({Vector2? position})
+  Keroco({super.position})
       : super(
           name: 'Keroco',
           maxHp: 30,
           attack: 3,
-          position: position,
         );
 
   @override

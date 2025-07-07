@@ -3,6 +3,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
+import 'package:ruins_legacy/game/components/collision_block.dart';
 
 // 'Jiwa' pemain yang digerakkan saat fase bertahan
 class PlayerHeart extends PositionComponent with HasGameRef, CollisionCallbacks {
@@ -34,8 +35,8 @@ class PlayerHeart extends PositionComponent with HasGameRef, CollisionCallbacks 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     // Logika untuk menangani tabrakan dengan musuh atau objek lain
-    if (other is PlayerHeart) {
-      // Misalnya, jika bertabrakan dengan PlayerHeart lain, hentikan gerakan
+    if (other is CollisionBlock) {
+      // Misalnya, jika bertabrakan dengan CollisionBlock, hentikan gerakan
       velocity = Vector2.zero();
     }
     super.onCollision(intersectionPoints, other);

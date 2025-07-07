@@ -8,11 +8,11 @@ class ActionButton extends StatelessWidget {
   final IconData icon;
 
   const ActionButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.onPressed,
-    required this.icon,
-  }) : super(key: key);
+    required this.icon, required Text child,
+  });
 
   @override
   Widget build(BuildContext context) {

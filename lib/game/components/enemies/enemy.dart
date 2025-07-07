@@ -13,9 +13,9 @@ abstract class Enemy extends SpriteAnimationComponent with HasGameRef {
     required this.name,
     required this.maxHp,
     required this.attack,
-    Vector2? position,
-    SpriteAnimation? animation,
-  }) : currentHp = maxHp, super(position: position, animation: animation, anchor: Anchor.center);
+    super.position,
+    super.animation,
+  }) : currentHp = maxHp, super(anchor: Anchor.center);
 
   bool get isDefeated => currentHp <= 0;
 

@@ -31,8 +31,5 @@ class BattleScreen extends Component with HasGameRef<RuinsGame> {
     );
   }
 
-  // Kita akan menambahkan logika untuk kembali ke overworld di sini nanti
-  void endBattle() {
-    game.endBattle();
-  }
+
 }

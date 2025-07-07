@@ -2,12 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:ruins_legacy/game/systems/battle_system.dart';
-import 'package:ruins_legacy/game/systems/battle_system.dart';
 import 'package:ruins_legacy/widgets/battle_ui/action_button.dart';
 
 class BattleBox extends StatefulWidget {
   final BattleSystem battleSystem;
-  const BattleBox({Key? key, required this.battleSystem}) : super(key: key);
+  const BattleBox({super.key, required this.battleSystem});
 
   @override
   State<BattleBox> createState() => _BattleBoxState();
@@ -49,7 +48,10 @@ class _BattleBoxState extends State<BattleBox> {
                 padding: const EdgeInsets.all(10),
                 child: Text(
                   _dialogueText,
-                  style: const TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'Courier'),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontFamily: 'Courier'),
                 ),
               ),
             ),
@@ -67,10 +69,30 @@ class _BattleBoxState extends State<BattleBox> {
                     crossAxisCount: 2,
                     childAspectRatio: 2.5,
                     children: [
-                      ActionButton(label: 'FIGHT', icon: Icons.flash_on, onPressed: () => widget.battleSystem.selectAction(PlayerAction.fight)),
-                      ActionButton(label: 'ACT', icon: Icons.mood, onPressed: () => widget.battleSystem.selectAction(PlayerAction.act)),
-                      ActionButton(label: 'ITEM', icon: Icons.work, onPressed: () => widget.battleSystem.selectAction(PlayerAction.item)),
-                      ActionButton(label: 'MERCY', icon: Icons.favorite, onPressed: () => widget.battleSystem.selectAction(PlayerAction.mercy)),
+                      ActionButton(
+                          onPressed: () => widget.battleSystem
+                              .selectAction(PlayerAction.fight),
+                          icon: Icons.flash_on,
+                          label: 'FIGHT',
+                          child: const Text('FIGHT')),
+                      ActionButton(
+                          onPressed: () =>
+                              widget.battleSystem.selectAction(PlayerAction.act),
+                          icon: Icons.mood,
+                          label: 'ACT',
+                          child: const Text('ACT')),
+                      ActionButton(
+                          onPressed: () => widget.battleSystem
+                              .selectAction(PlayerAction.item),
+                          icon: Icons.work,
+                          label: 'ITEM',
+                          child: const Text('ITEM')),
+                      ActionButton(
+                          onPressed: () => widget.battleSystem
+                              .selectAction(PlayerAction.mercy),
+                          icon: Icons.favorite,
+                          label: 'MERCY',
+                          child: const Text('MERCY')),
                     ],
                   );
                 },

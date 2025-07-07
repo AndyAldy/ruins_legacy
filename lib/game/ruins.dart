@@ -16,7 +16,7 @@ import 'package:ruins_legacy/game/systems/dialogue_system.dart';
 class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
   late final RouterComponent router;
   late final DialogueSystem dialogueSystem;
-  
+
   // Data utama pemain
   final GameData playerData = GameData();
   final Player player = Player();
@@ -55,7 +55,8 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
   }
 
   @override
-  KeyEventResult onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  KeyEventResult onKeyEvent(
+      RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is RawKeyDownEvent) {
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
         if (dialogueSystem.isDialogueVisible) {
@@ -67,9 +68,9 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
       }
     }
     // Forward event ke komponen lain (seperti Player)
-    return super.onKeyEvent(event as KeyEvent, keysPressed);
+    return super.onKeyEvent(event, keysPressed);
   }
-  
+
   void startBattle(Enemy Function() enemyBuilder) {
     // Simpan posisi terakhir player sebelum bertarung
     lastPlayerPosition = player.position.clone();
@@ -90,4 +91,12 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
       camera.follow(player);
     }
   }
-}
+
+
+  @override
+  void onDetach() {
+    // Bersihkan semua komponen saat game diakhiri
+    removeAll(children);
+    super.onDetach();
+  }
+} 

@@ -1,5 +1,3 @@
-// lib/game/components/player/player.dart
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -10,17 +8,19 @@ import 'package:ruins_legacy/models/dialogue_node.dart';
 enum PlayerState { idle, running }
 
 class Player extends SpriteAnimationGroupComponent<PlayerState>
-    with HasGameRef<RuinsGame>, KeyboardHandler, CollisionCallbacks {
+    with KeyboardHandler, CollisionCallbacks, HasGameRef<RuinsGame> {
   final double _speed = 150;
   Vector2 _direction = Vector2.zero();
   bool canMove = true;
   Npc? _collidingNpc;
+  // Hapus 'late final RuinsGame game;'
 
   Player() : super(size: Vector2(32, 48), anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {
-    final spriteSheet = await game.images.load('player_spritesheet.png');
+    // Ganti 'game' dengan 'gameRef'
+    final spriteSheet = await gameRef.images.load('player_spritesheet.png');
     animations = {
       PlayerState.idle: SpriteAnimation.fromFrameData(
           spriteSheet,
@@ -50,18 +50,23 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _direction = Vector2.zero();
     if (canMove) {
-      final isUp = keysPressed.contains(LogicalKeyboardKey.keyW) || keysPressed.contains(LogicalKeyboardKey.arrowUp);
-      final isDown = keysPressed.contains(LogicalKeyboardKey.keyS) || keysPressed.contains(LogicalKeyboardKey.arrowDown);
-      final isLeft = keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-      final isRight = keysPressed.contains(LogicalKeyboardKey.keyD) || keysPressed.contains(LogicalKeyboardKey.arrowRight);
+      final isUp = keysPressed.contains(LogicalKeyboardKey.keyW) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowUp);
+      final isDown = keysPressed.contains(LogicalKeyboardKey.keyS) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowDown);
+      final isLeft = keysPressed.contains(LogicalKeyboardKey.keyA) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+      final isRight = keysPressed.contains(LogicalKeyboardKey.keyD) ||
+          keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
       _direction.y += isUp ? -1 : 0;
       _direction.y += isDown ? 1 : 0;
       _direction.x += isLeft ? -1 : 0;
       _direction.x += isRight ? 1 : 0;
     }
-    
-    current = _direction == Vector2.zero() ? PlayerState.idle : PlayerState.running;
+
+    current =
+        _direction == Vector2.zero() ? PlayerState.idle : PlayerState.running;
     if (_direction.x != 0) {
       scale.x = _direction.x > 0 ? 1 : -1;
     }
@@ -69,7 +74,8 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Npc) {
       _collidingNpc = other;
     }
@@ -87,11 +93,14 @@ class Player extends SpriteAnimationGroupComponent<PlayerState>
   void interact() {
     if (_collidingNpc != null) {
       if (_collidingNpc!.isEnemy) {
-        // Mulai pertarungan dengan musuh yang sesuai
-        game.startBattle(_collidingNpc!.enemyType);
+        // Tambahkan null check untuk enemyType
+        final enemyBuilder = _collidingNpc!.enemyType;
+        if (enemyBuilder != null) {
+          gameRef.startBattle(enemyBuilder);
+        }
       } else {
-        // Tampilkan dialog dari NPC
-        game.dialogueSystem.showDialogue(DialogueNode(text: _collidingNpc!.dialogue));
+        gameRef.dialogueSystem
+            .showDialogue(DialogueNode(text: _collidingNpc!.dialogue));
       }
     }
   }
