@@ -4,11 +4,14 @@ import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/services.dart';
 import 'package:ruins_legacy/game/ruins.dart';
+import 'package:ruins_legacy/game/components/npc/npc.dart';
+import 'package:ruins_legacy/widgets/dialogue_box.dart';
 
 class Player extends SpriteAnimationComponent
     with KeyboardHandler, HasGameRef<RuinsGame>, CollisionCallbacks {
   final double _playerSpeed = 200.0;
   final Vector2 _velocity = Vector2.zero();
+  Npc? collidingNpc;
 
   // Animasi untuk setiap arah
   late final SpriteAnimation _runDownAnimation;
@@ -87,6 +90,14 @@ class Player extends SpriteAnimationComponent
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
+    if (other is Npc) {
+      collidingNpc = other;
+      void interact() {
+    if (collidingNpc != null) {
+      gameRef.showDialogue(collidingNpc!.dialogue);
+    }
+  }
+}
     // Jika bertabrakan dengan sesuatu (misal: dinding), berhenti
     if (other is ScreenHitbox) {
       // Anda bisa tambahkan logika untuk dinding spesifik di sini
