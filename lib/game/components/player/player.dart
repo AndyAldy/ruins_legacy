@@ -20,7 +20,7 @@ class Player extends SpriteAnimationComponent
   late final SpriteAnimation _runRightAnimation;
   late final SpriteAnimation _standingAnimation;
 
-  Player() : super(size: Vector2.all(64.0), anchor: Anchor.center);
+  Player({required Vector2 position}) : super(size: Vector2.all(64.0), anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {

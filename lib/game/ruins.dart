@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ruins_legacy/game/components/player/player.dart';
 import 'package:ruins_legacy/game/components/collision_block.dart';
-import 'package:flutter/services.dart';
 import 'package:ruins_legacy/widgets/dialogue_box.dart';
 import 'package:ruins_legacy/game/components/npc/npc.dart';
 
@@ -19,19 +18,19 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardHandler {
 
   @override
   Future<void> onLoad() async {
-        add(Npc(
-      position: Vector2(300, 250),
-      size: Vector2.all(64.0),
-      dialogue: "Halo, petualang... Selamat datang di reruntuhan kuno ini.",
-    ));
-    // Memuat semua gambar ke cache untuk akses cepat
-    await images.loadAll(['player_spritesheet.png']);
+    // 1. Muat semua aset terlebih dahulu untuk performa yang lebih baik.
+    await images.loadAll(['player_spritesheet.png', 'npc.png']);
 
-    // Muat peta Tiled
+    // 2. Siapkan kamera dan atur resolusinya.
+    cam = CameraComponent.withFixedResolution(width: 640, height: 360, world: this);
+    cam.viewfinder.zoom = 1.5; // Atur zoom sesuai selera
+    add(cam);
+
+    // 3. Muat peta Tiled.
     map = await TiledComponent.load('map.tmx', Vector2.all(16));
     add(map);
 
-    // Ambil layer 'Collisions' dari peta
+    // 4. Proses layer kolisi dari peta.
     final collisionLayer = map.tileMap.getLayer<ObjectGroup>('Collisions');
     if (collisionLayer != null) {
       for (final collision in collisionLayer.objects) {
@@ -41,45 +40,49 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardHandler {
         ));
       }
     }
+    
+    // 5. Tambahkan NPC ke dalam game.
+    add(Npc(
+      position: Vector2(300, 250),
+      dialogue: "Halo, petualang... Selamat datang di reruntuhan kuno ini.",
+    ));
 
-    // Tambahkan pemain
-    player = Player();
+    // 6. Tambahkan pemain.
+    player = Player(position: Vector2(200, 200)); // Berikan posisi awal di sini
     add(player);
     
-    // Atur posisi awal pemain
-    player.position = Vector2(200, 200);
-
-    // Atur kamera untuk mengikuti pemain
-    cam = CameraComponent.withFixedResolution(
-        width: 640, height: 360, world: this);
+    // 7. Arahkan kamera untuk mengikuti pemain.
+    // Metode 'follow' ada di viewfinder kamera. Ini sudah benar.
     cam.viewfinder.follow(player);
-    cam.viewfinder.zoom = 1.5; // Atur zoom sesuai selera
-    add(cam);
   }
 
-  // Override onKeyEvent untuk meneruskan event ke player
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    // Meneruskan event gerakan ke player
-    player.onKeyEvent(event, keysPressed);
-        if (event is KeyDownEvent) {
+    // Pertama, tangani input untuk dialog (prioritas lebih tinggi)
+    if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.space) {
         if (isDialogueVisible) {
-          // Jika dialog sedang tampil, sembunyikan
+          // Jika dialog tampil, tombol spasi akan menyembunyikannya.
           removeWhere((component) => component is DialogueBox);
           isDialogueVisible = false;
         } else {
-          // Jika tidak, cek apakah player bisa berinteraksi
+          // Jika tidak ada dialog, tombol spasi akan memicu interaksi.
+          // Metode 'interact' ada di dalam class Player.
           player.interact();
         }
-        return KeyEventResult.handled;
+        return KeyEventResult.handled; // Input sudah ditangani
       }
     }
-    return KeyEventResult.ignored;
+    
+    // Jika input bukan untuk dialog, teruskan ke pemain untuk gerakan.
+    // Metode 'onKeyEvent' ada di dalam class Player dengan mixin KeyboardHandler.
+    return player.onKeyEvent(event, keysPressed);
   }
-    void showDialogue(String text) {
+
+  // Fungsi ini dipanggil dari dalam Player saat interaksi berhasil.
+  void showDialogue(String text) {
     if (!isDialogueVisible) {
-      add(DialogueBox(text: text, gameSize: size));
+      add(DialogueBox(text: text));
       isDialogueVisible = true;
     }
   }
