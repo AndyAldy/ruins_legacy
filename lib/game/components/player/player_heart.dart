@@ -3,7 +3,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
-import 'package:ruins_legacy/game/components/collision_block.dart';
+import 'package:ruins_legacy/game/components/worlds/collision_block.dart';
 
 // 'Jiwa' pemain yang digerakkan saat fase bertahan
 class PlayerHeart extends PositionComponent with HasGameRef, CollisionCallbacks {

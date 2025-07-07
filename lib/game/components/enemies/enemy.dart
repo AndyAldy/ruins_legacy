@@ -1,29 +1,31 @@
-// lib/game/enemies/enemy.dart
-
 import 'package:flame/components.dart';
+import 'package:ruins_legacy/game/ruins.dart';
 
-// Kelas dasar untuk semua musuh
-abstract class Enemy extends SpriteAnimationComponent with HasGameRef {
-  final String name;
-  int maxHp;
-  int currentHp;
-  int attack;
+// Ini adalah SATU-SATUNYA kelas dasar untuk semua musuh.
+// Menggunakan SpriteAnimationComponent agar semua musuh bisa beranimasi.
+abstract class Enemy extends SpriteAnimationComponent with HasGameRef<RuinsGame> {
+  final String name; // Menggunakan 'name' agar konsisten
+  final int maxHp;
+  int hp;
+  final int attack;
+  final int defense;
 
   Enemy({
-    required this.name,
+    required this.name, // Menggunakan 'name'
     required this.maxHp,
     required this.attack,
+    this.defense = 0,
     super.position,
-    super.animation,
-  }) : currentHp = maxHp, super(anchor: Anchor.center);
+  })  : hp = maxHp,
+        super(anchor: Anchor.center);
 
-  bool get isDefeated => currentHp <= 0;
+  bool get isDefeated => hp <= 0;
 
-  void takeDamage(int amount) {
-    currentHp -= amount;
-    if (currentHp < 0) {
-      currentHp = 0;
+  void takeDamage(int damage) {
+    final effectiveDamage = (damage - defense).clamp(0, 999);
+    hp -= effectiveDamage;
+    if (hp < 0) {
+      hp = 0;
     }
-    // TODO: Tambahkan efek visual saat terkena damage
   }
 }

@@ -1,5 +1,3 @@
-// lib/widgets/battle_ui/action_button.dart
-
 import 'package:flutter/material.dart';
 
 class ActionButton extends StatelessWidget {
@@ -11,21 +9,24 @@ class ActionButton extends StatelessWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    required this.icon, required Text child,
+    required this.icon,
+    // Hapus 'required Text child' yang tidak perlu
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
       child: ElevatedButton.icon(
         onPressed: onPressed,
-        icon: Icon(icon, color: Colors.yellow),
+        icon: Icon(icon, color: Colors.yellow, size: 18),
         label: Text(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           side: const BorderSide(color: Colors.white, width: 2),
           shape: const BeveledRectangleBorder(),
+          textStyle: const TextStyle(fontSize: 16),
         ),
       ),
     );

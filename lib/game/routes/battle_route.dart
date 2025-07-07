@@ -1,22 +1,25 @@
 import 'package:flame/components.dart';
+import 'package:flame/game.dart';
 import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 import 'package:ruins_legacy/game/ruins.dart';
 import 'package:ruins_legacy/game/systems/battle_system.dart';
 
 // Route ini sekarang mengelola seluruh scene pertarungan.
-class BattleRoute extends Route {
+// PERBAIKAN: Tambahkan mixin 'HasGameRef<RuinsGame>'
+class BattleRoute extends Route with HasGameRef<RuinsGame> {
   final Enemy Function() enemyBuilder;
   late BattleSystem _battleSystem;
 
   // Getter publik agar UI bisa mengakses battle system dengan aman
   BattleSystem get battleSystem => _battleSystem;
 
-  BattleRoute({required this.enemyBuilder}) : super();
+  BattleRoute({required this.enemyBuilder}) : super(Component.new);
 
   @override
   void onPush(Route? previousRoute) {
-    // Gunakan findGame<T>() untuk mendapatkan referensi game
-    final game = findGame<RuinsGame>();
+    // PERBAIKAN: Gunakan 'gameRef' yang disediakan oleh HasGameRef.
+    // Ini lebih modern dan aman daripada findGame().
+    final game = gameRef;
     _battleSystem = BattleSystem(
       playerData: game.playerData,
       enemy: enemyBuilder(),
@@ -32,7 +35,8 @@ class BattleRoute extends Route {
 
   @override
   void onPop(Route nextRoute) {
-    final game = findGame<RuinsGame>();
+    // PERBAIKAN: Gunakan 'gameRef' juga di sini.
+    final game = gameRef;
     game.overlays.remove('BattleUI');
     game.removeWhere((c) => c is Enemy);
     _battleSystem.dispose();

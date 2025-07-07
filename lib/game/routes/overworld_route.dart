@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:ruins_legacy/game/components/collision_block.dart';
+import 'package:ruins_legacy/game/components/worlds/collision_block.dart';
 import 'package:ruins_legacy/game/components/enemies/keroco.dart';
 import 'package:ruins_legacy/game/components/npc/npc.dart';
 import 'package:ruins_legacy/game/ruins.dart';

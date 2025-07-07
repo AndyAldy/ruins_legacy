@@ -1,25 +1,28 @@
-// lib/game/components/npc.dart
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:ruins_legacy/game/components/enemies/keroco.dart';
+import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 
-class Npc extends SpriteComponent with CollisionCallbacks {
+class Npc extends SpriteComponent with HasGameRef, CollisionCallbacks {
   final String dialogue;
   final bool isEnemy;
+  // Ini adalah fungsi yang akan membuat instance musuh.
+  // Bisa null jika NPC ini bukan musuh.
+  final Enemy Function()? enemyType;
 
-  final bool enemyType;
-
-  Npc(this.enemyType, {
+  Npc({
+    required this.dialogue,
+    this.isEnemy = false,
+    this.enemyType,
     super.position,
     super.size,
-    required this.dialogue,
-    this.isEnemy = false, required Keroco Function({Vector2? position}) Function() enemyBuilder, required Keroco Function({Vector2? position}) enemyType,
   }) : super(anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {
-    // Anda bisa menggunakan sprite berbeda jika NPC adalah musuh
-    sprite = await Sprite.load(isEnemy ? 'enemy_sprite.png' : 'npc.png'); 
+    // Menggunakan path aset yang benar dari struktur folder Anda
+    final spritePath = isEnemy ? 'sprite/enemies/keroco.png' : 'sprite/players/player_spritesheet.png'; // Ganti dengan sprite NPC yang sesuai
+    sprite = await gameRef.loadSprite(spritePath);
     add(RectangleHitbox());
+    return super.onLoad();
   }
 }

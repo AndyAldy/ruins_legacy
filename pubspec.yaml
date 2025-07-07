@@ -27,5 +27,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/
-    - assets/audio/
+    - assets/img/sprite/
+    - assets/img/sprite/players/
+    - assets/img/sprite/enemies/
+    - assets/img/tilesets/
     - assets/fonts/
+    - assets/audio/

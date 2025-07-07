@@ -1,8 +1,6 @@
 // lib/game/components/enemies/enemy.dart
 import 'package:flame/components.dart';
 import 'package:ruins_legacy/game/ruins.dart'; // Import RuinsGame
-import 'package:ruins_legacy/models/game_data.dart';
-import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 class Boss1 extends Enemy {
   Boss1({Vector2? position})
       : super(

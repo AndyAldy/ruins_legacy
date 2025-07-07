@@ -1,5 +1,3 @@
-// lib/widgets/battle_ui/battle_box.dart
-
 import 'package:flutter/material.dart';
 import 'package:ruins_legacy/game/systems/battle_system.dart';
 import 'package:ruins_legacy/widgets/battle_ui/action_button.dart';
@@ -41,7 +39,6 @@ class _BattleBoxState extends State<BattleBox> {
         ),
         child: Row(
           children: [
-            // Kotak dialog/narasi
             Expanded(
               flex: 3,
               child: Container(
@@ -51,11 +48,10 @@ class _BattleBoxState extends State<BattleBox> {
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
-                      fontFamily: 'Courier'),
+                      fontFamily: 'Courier'), // Ganti dengan font dari assets nanti
                 ),
               ),
             ),
-            // Kotak aksi
             Expanded(
               flex: 2,
               child: StreamBuilder<BattleState>(
@@ -63,36 +59,28 @@ class _BattleBoxState extends State<BattleBox> {
                 initialData: BattleState.selectingAction,
                 builder: (context, snapshot) {
                   if (snapshot.data != BattleState.selectingAction) {
-                    return const SizedBox.shrink(); // Sembunyikan tombol jika bukan giliran pemain
+                    return const SizedBox.shrink();
                   }
                   return GridView.count(
                     crossAxisCount: 2,
                     childAspectRatio: 2.5,
                     children: [
                       ActionButton(
-                          onPressed: () => widget.battleSystem
-                              .selectAction(PlayerAction.fight),
+                          onPressed: () => widget.battleSystem.selectAction(PlayerAction.fight),
                           icon: Icons.flash_on,
-                          label: 'FIGHT',
-                          child: const Text('FIGHT')),
+                          label: 'FIGHT'), // Gunakan 'label'
                       ActionButton(
-                          onPressed: () =>
-                              widget.battleSystem.selectAction(PlayerAction.act),
+                          onPressed: () => widget.battleSystem.selectAction(PlayerAction.act),
                           icon: Icons.mood,
-                          label: 'ACT',
-                          child: const Text('ACT')),
+                          label: 'ACT'), // Gunakan 'label'
                       ActionButton(
-                          onPressed: () => widget.battleSystem
-                              .selectAction(PlayerAction.item),
+                          onPressed: () => widget.battleSystem.selectAction(PlayerAction.item),
                           icon: Icons.work,
-                          label: 'ITEM',
-                          child: const Text('ITEM')),
+                          label: 'ITEM'), // Gunakan 'label'
                       ActionButton(
-                          onPressed: () => widget.battleSystem
-                              .selectAction(PlayerAction.mercy),
+                          onPressed: () => widget.battleSystem.selectAction(PlayerAction.mercy),
                           icon: Icons.favorite,
-                          label: 'MERCY',
-                          child: const Text('MERCY')),
+                          label: 'MERCY'), // Gunakan 'label'
                     ],
                   );
                 },

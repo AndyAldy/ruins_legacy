@@ -1,5 +1,3 @@
-// lib/models/game_data.dart
-
 // Kelas untuk menyimpan data progres pemain yang bisa disimpan (save) atau dimuat (load).
 class GameData {
   int level;
@@ -8,8 +6,6 @@ class GameData {
   int attack;
   int defense;
   List<String> inventory;
-  // Tambahkan flag untuk event cerita di sini
-  // contoh: Set<String> storyFlags;
 
   GameData({
     this.level = 1,
@@ -19,6 +15,15 @@ class GameData {
     this.defense = 1,
     this.inventory = const [],
   });
+
+  // Method untuk mengurangi HP pemain
+  void takeDamage(int damage) {
+    final effectiveDamage = (damage - defense).clamp(0, 999);
+    currentHp -= effectiveDamage;
+    if (currentHp < 0) {
+      currentHp = 0;
+    }
+  }
 
   void reset() {
     level = 1;

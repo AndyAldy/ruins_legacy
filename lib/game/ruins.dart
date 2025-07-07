@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' hide Route;
 import 'package:ruins_legacy/game/components/enemies/enemy.dart';
 import 'package:ruins_legacy/game/components/player/player.dart';
+import 'package:ruins_legacy/game/routes/afterlife_route.dart';
 import 'package:ruins_legacy/game/routes/battle_route.dart';
-// Ubah import ini untuk langsung menunjuk ke komponen layarnya
 import 'package:ruins_legacy/game/routes/overworld_route.dart';
 import 'package:ruins_legacy/game/systems/dialogue_system.dart';
 import 'package:ruins_legacy/models/game_data.dart';
@@ -23,9 +23,9 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
   @override
   Future<void> onLoad() async {
     await images.loadAll([
-      'player_spritesheet.png',
-      'npc.png',
-      'enemy_sprite.png',
+      'sprite/players/player_spritesheet.png',
+      'sprite/enemies/keroco.png', // Ganti dengan nama sprite yang benar
+      'tilesets/ruins_tileset.png', // Ganti dengan nama tileset yang benar
     ]);
 
     camera.viewport = FixedResolutionViewport(resolution: Vector2(640, 360));
@@ -33,11 +33,11 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
 
     dialogueSystem = DialogueSystem(this);
 
-    // PERBAIKAN DI SINI: Gunakan sintaks Route yang baru dan benar
     router = RouterComponent(
       initialRoute: 'overworld',
       routes: {
         'overworld': Route(OverworldScreen.new),
+        'afterlife': Route(AfterlifeScreen.new),
       },
     );
     add(router);
@@ -66,17 +66,21 @@ class RuinsGame extends FlameGame with HasCollisionDetection, KeyboardEvents {
   void startBattle(Enemy Function() enemyBuilder) {
     lastPlayerPosition = player.position.clone();
     player.canMove = false;
-    router.pushRoute(BattleRoute(enemyBuilder: enemyBuilder) as Route);
+    router.pushRoute(BattleRoute(enemyBuilder: enemyBuilder));
   }
 
-  void endBattle() {
+  void endBattle({required bool battleWon}) {
     router.pop();
+    if (!battleWon) {
+      // Jika kalah, pergi ke layar Game Over
+      // PERBAIKAN: Metode yang benar adalah 'pushReplacementNamed'
+      router.pushReplacementNamed('afterlife');
+    }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    // Pengecekan ini perlu diubah karena OverworldRoute tidak ada lagi
     if (router.currentRoute.key == 'overworld' && player.isMounted) {
       camera.follow(player);
     }
